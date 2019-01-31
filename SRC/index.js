@@ -1,9 +1,9 @@
-const express = require("express");
-const morgan = require("morgan");
+const express = require('express');
+const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const app = express();
-mongoose.connect('mongodb://localhost/kinesis')
+mongoose.connect('mongodb://localhost/kinesis', { useNewUrlParser: true })
     .then(db => console.log('DB is conected'))
     .catch(err => console.error(err));
 

@@ -1,5 +1,5 @@
-const Mongoose = require('Mongoose');
-const { Schema } = Mongoose;
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const Paciente = new Schema ({
     nombre: String,
@@ -10,7 +10,7 @@ const Paciente = new Schema ({
    
 });
 
-module.exports = Mongoose.model('Paciente', Paciente);
+module.exports = mongoose.model('Paciente', Paciente);
 
 
 
