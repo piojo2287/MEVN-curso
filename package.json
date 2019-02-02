@@ -16,7 +16,9 @@
     "mongoose": "^5.4.7",
     "morgan": "^1.9.1",
     "nodemon": "^1.18.9",
-    "vue-router": "^3.0.2"
+    "vue-dropdowns": "^1.0.6",
+    "vue-router": "^3.0.2",
+    "vuejs-datepicker": "^1.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

@@ -11,19 +11,23 @@
                                     placeholder="Nombre" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" v-model='paciente.apellido'
+                                    <input type="text" 
+                                    v-model='paciente.apellido'
                                     placeholder="Apellido" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" v-model='paciente.fecha_nac'
-                                    placeholder="Fecha de nacimiento" class="form-control">
+                                    <datepicker  placeholder="Fecha de nacimiento" 
+                                        v-model='paciente.fecha_nac'>
+                                    </datepicker>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" v-model='paciente.genero'
+                                    <input type="text" 
+                                    v-model='paciente.genero'
                                     placeholder="Género" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" v-model='paciente.domicilio'
+                                    <input type="text" 
+                                    v-model='paciente.domicilio'
                                     placeholder="Domicilio" class="form-control">
                                 </div>
                                 <button class="btn btn-primary btn-block">Guardar</button>
@@ -36,22 +40,44 @@
     </template>
 
     <script>
+        import Datepicker from 'vuejs-datepicker';
+    
+        class Paciente {
+            constructor(nombre, apellido, fecha_nac, genero, domicilio){
+                this.nombre = nombre;
+                this.apellido = apellido;
+                this.fecha_nac = fecha_nac;
+                this.genero = genero;
+                this.domicilio = domicilio;
+            }
+        }
+    
         export default {
+            components: {
+                Datepicker
+            },
             data() {
                 return {
-                    paciente: {
-                        nombre: '',
-                        apellido: '',
-                        fecha_nac: '',
-                        genero: '',
-                        domicilio: ''
-                    }
+                    paciente: new Paciente()
                 }
             },
             methods: {
                 addPatient() {
-                    console.log(this.paciente);
-                }  
+                    fetch('/api/pacientes', {
+                        method: 'POST',
+                        body: JSON.stringify(this.paciente),
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => console.log(data));
+                    this.paciente = new Paciente();
+                },
+                getPatients(){
+                    fetch('/api/pacientes')
+                }
             }
         }
     </script>

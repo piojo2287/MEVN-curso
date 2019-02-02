@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 //routes
-app.use('/pacientes', require('./routes/pacientes'));
+app.use('/api/pacientes', require('./routes/pacientes'));
 
 
 //static files
