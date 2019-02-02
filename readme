@@ -1,0 +1,33 @@
+En el segundo video se pide instalar como "devDependecies" lo siguiente:
+
+    npm install babel-loader babel-preset-env vue-loader vue-template-compiler -D
+
+pero luego al ejecutar  "npm run webpack" se produce un error
+
+
+    > MEVN-curso@1.0.0 webpack C:\Users\Juan\Documents\Desarrollo\Kinesis\MEVN-curso
+    > webpack --mode development
+
+    Hash: 3daf4656632ebe693468
+    Version: webpack 4.29.0
+    Time: 339ms
+    Built at: 2019-02-01 19:46:48
+        Asset      Size  Chunks             Chunk Names
+    bundle.js  7.45 KiB    main  [emitted]  main
+    Entrypoint main = bundle.js
+    [./src/app/index.js] 3.3 KiB {main} [not cacheable] [built] [failed] [1 error]
+
+    ERROR in ./src/app/index.js
+    Module build failed (from ./node_modules/babel-loader/lib/index.js):
+    Error: Cannot find module '@babel/core'
+    babel-loader@8 requires Babel 7.x (the package '@babel/core'). If you'd like to use Babel 6.x ('babel-core'), you should install 'babel-loader@7'.
+        at Function.Module._resolveFilename (internal/modules/cjs/loader.js:581:15)
+        at Function.Module._load (internal/modules/cjs/loader.js:507:25)
+        at Module.require (internal/modules/cjs/loader.js:637:17)
+        at require (C:\Users\Juan\Documents\Desarrollo\Kinesis\MEVN-curso\node_modules\v8-compile-cache\v8-compile-cache.js:159:20)
+        at Object.<anonymous> (C:\Users\Juan\Documents\Desarrollo\Kinesis\MEVN-curso\node_modules\babel-loader\lib\index.js:10:11)
+        
+
+En internet encontre la solucion, se debe instalar lo siguiente:
+
+    npm install -D babel-loader @babel/core @babel/preset-env
