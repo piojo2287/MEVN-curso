@@ -4,7 +4,7 @@
                 <div class="col-md-5">
                     <div class="card">
                         <div class="card-body">
-                            <form @submit.prevent="addPatient">
+                            <form @submit.prevent="sendPatient">
                                 <div class="form-group">
                                     <input type="text" 
                                     v-model='paciente.nombre'
@@ -30,10 +30,35 @@
                                     v-model='paciente.domicilio'
                                     placeholder="Domicilio" class="form-control">
                                 </div>
-                                <button class="btn btn-primary btn-block">Guardar</button>
+                                <template v-if="edit === false">
+                                    <button class="btn btn-primary btn-block">Guardar</button>
+                                </template>
+                                <template v-else>
+                                    <button class="btn btn-primary btn-block">Actualizar</button>
+                                </template>
                             </form>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-7">
+                    <table class="table table-bordered">
+                        <thead>
+                            <th>Apellido</th>
+                            <th>Nombre</th>
+                        </thead>
+                        <tbody v-for="paciente of pacientes">
+                            <td>{{paciente.apellido}}</td>
+                            <td>{{paciente.nombre}}</td>
+                            <td>
+                                <button @click="disablePatient(paciente._id)" class="btn btn-danger">
+                                    Borrar
+                                </button>
+                                <button @click="editPatient(paciente._id)" class="btn btn-secondary">
+                                    Editar
+                                </button>
+                            </td>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -58,25 +83,79 @@
             },
             data() {
                 return {
-                    paciente: new Paciente()
+                    paciente: new Paciente(),
+                    pacientes: [],
+                    edit: false,
+                    patientToEdit: ''
                 }
             },
+            created(){
+                this.getPatient();
+            },
             methods: {
-                addPatient() {
-                    fetch('/api/pacientes', {
-                        method: 'POST',
-                        body: JSON.stringify(this.paciente),
+                sendPatient() {
+                    if (this.edit === false){
+                        fetch('/api/pacientes', {
+                            method: 'POST',
+                            body: JSON.stringify(this.paciente),
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-type': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            this.getPatient();
+                        });
+                    }else{
+                        fetch('/api/pacientes/' + this.patientToEdit, {
+                            method: 'PUT',
+                            body: JSON.stringify(this.paciente),
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-type': 'application/json'
+                            }
+                        })
+                        .then (res => res.json())
+                        .then (data => {
+                            this.getPatient();
+                            this.edit = false;
+                        })
+                    }
+
+                    this.paciente = new Paciente();
+                },
+                getPatient(){
+                    fetch('/api/pacientes')
+                        .then(res => res.json())
+                        .then(data => {
+                            this.pacientes = data
+                            console.log(this.pacientes)
+                        });
+                },
+                disablePatient(id) {
+                    fetch('api/pacientes/' + id, {
+                        method: 'DELETE',
                         headers: {
                             'Accept': 'application/json',
                             'Content-type': 'application/json'
                         }
                     })
                     .then(res => res.json())
-                    .then(data => console.log(data));
-                    this.paciente = new Paciente();
+                    .then(data => {
+                        this.getPatient();
+                    });
                 },
-                getPatients(){
-                    fetch('/api/pacientes')
+                editPatient(id) {
+                    fetch('api/pacientes/' + id)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.paciente = new Paciente(data.nombre, data.apellido,
+                            data.fecha_nac, data.genero,
+                            data.domicilio);
+                        this.patientToEdit = data._id;
+                        this.edit = true;
+                    });
                 }
             }
         }
