@@ -16,14 +16,24 @@
                                     placeholder="Apellido" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <datepicker  placeholder="Fecha de nacimiento" 
-                                        v-model='paciente.fecha_nac'>
-                                    </datepicker>
+                                    <div class="form-control">
+                                        <datepicker placeholder="Fecha de nacimiento" 
+                                            v-model='paciente.fecha_nac'>
+                                        </datepicker>
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" 
+                                    <input list="lista_genero" type="text" 
                                     v-model='paciente.genero'
                                     placeholder="Género" class="form-control">
+                                    <datalist id="lista_genero">
+                                        <option value="Femenino"></option>
+                                        <option value="Masculino"></option>
+                                    </datalist>
+
+                                    <!-- <input type="text" 
+                                    v-model='paciente.genero'
+                                    placeholder="Género" class="form-control"> -->
                                 </div>
                                 <div class="form-group">
                                     <input type="text" 
@@ -41,12 +51,12 @@
                     </div>
                 </div>
                 <div class="col-md-7">
-                    <table class="table table-bordered">
+                    <table id="mdtable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                         <thead>
                             <th>Apellido</th>
                             <th>Nombre</th>
                         </thead>
-                        <tbody v-for="paciente of pacientes">
+                        <tbody v-for="(paciente,index) of pacientes" v-bind:key="index">
                             <td>{{paciente.apellido}}</td>
                             <td>{{paciente.nombre}}</td>
                             <td>
@@ -65,8 +75,8 @@
     </template>
 
     <script>
-        import Datepicker from 'vuejs-datepicker';
-    
+        import Datepicker from 'vuejs-datepicker'; 
+         
         class Paciente {
             constructor(nombre, apellido, fecha_nac, genero, domicilio){
                 this.nombre = nombre;
