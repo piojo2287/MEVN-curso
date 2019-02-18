@@ -9,7 +9,7 @@
             </button>
             <div class="collapse navbar-collapse backgroundWhite" id="navbarNavDropdown">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <router-link to='/' class="nav-link">Home</router-link>
                     </li>
                     <li class="nav-item">
@@ -18,16 +18,13 @@
                     <li class="nav-item">
                         <router-link to='/contactos' class="nav-link">Contactos</router-link>
                     </li>
-                    <li class="nav-item">
-                        <router-link to='/pacientes' class="nav-link">Pacientes</router-link>
-                    </li>
                     <li class="nav-item dropdown"  >
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             Mantenimiento Datos
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">otro</a>
+                            <router-link to='/pacientes' class="nav-link">Pacientes</router-link>
                             <a class="dropdown-item" href="#">Turnos</a>
                         </div>
                     </li>

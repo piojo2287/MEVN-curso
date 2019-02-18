@@ -30,7 +30,6 @@
                                         <option value="Femenino"></option>
                                         <option value="Masculino"></option>
                                     </datalist>
-
                                     <!-- <input type="text" 
                                     v-model='paciente.genero'
                                     placeholder="Género" class="form-control"> -->
@@ -51,12 +50,13 @@
                     </div>
                 </div>
                 <div class="col-md-7">
-                    <table id="mdtable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                    <table id="mdtable" class="table table-striped table-bordered table-sm" cellspacing="0" 
+                            width="100%" data-pagination="true" data-page-size="7">
                         <thead>
                             <th>Apellido</th>
                             <th>Nombre</th>
                         </thead>
-                        <tbody v-for="(paciente,index) of pacientes" v-bind:key="index">
+                        <tbody v-for="(paciente,index) of datos" v-bind:key="index">
                             <td>{{paciente.apellido}}</td>
                             <td>{{paciente.nombre}}</td>
                             <td>
@@ -69,6 +69,14 @@
                             </td>
                         </tbody>
                     </table>
+                    <div class="overflow-auto">
+                        <div class="mt-3 text-right">
+                            <b-pagination v-model="currentPage" :total-rows="totalRows"
+                                              :per-page="perPage"
+                                              v-on:input="changePage"/>                 
+                        </div>
+                        <div class="mt-3">Pagina Actual: {{ currentPage }}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,7 +84,8 @@
 
     <script>
         import Datepicker from 'vuejs-datepicker'; 
-         
+        import BPagination from 'bootstrap-vue/es/components/pagination/pagination'
+        
         class Paciente {
             constructor(nombre, apellido, fecha_nac, genero, domicilio){
                 this.nombre = nombre;
@@ -88,19 +97,26 @@
         }
     
         export default {
+            
             components: {
-                Datepicker
+                Datepicker,
+                BPagination
             },
             data() {
                 return {
                     paciente: new Paciente(),
                     pacientes: [],
+                    datos: [],
                     edit: false,
-                    patientToEdit: ''
+                    patientToEdit: '',
+                    perPage: 5,
+                    totalRows: 0,
+                    currentPage: 1
                 }
             },
             created(){
-                this.getPatient();
+                this.getTotalPages();
+                this.getPatient(this.currentPage);
             },
             methods: {
                 sendPatient() {
@@ -115,7 +131,7 @@
                         })
                         .then(res => res.json())
                         .then(data => {
-                            this.getPatient();
+                            this.getPatient(this.currentPage);
                         });
                     }else{
                         fetch('/api/pacientes/' + this.patientToEdit, {
@@ -128,19 +144,22 @@
                         })
                         .then (res => res.json())
                         .then (data => {
-                            this.getPatient();
+                            this.getPatient(this.currentPage);
                             this.edit = false;
                         })
                     }
 
                     this.paciente = new Paciente();
                 },
-                getPatient(){
+                getPatient(pageNumber){
                     fetch('/api/pacientes')
                         .then(res => res.json())
                         .then(data => {
                             this.pacientes = data
-                            console.log(this.pacientes)
+                            //console.log("Pagina " +pageNumber);
+                            //console.log("Limite inferior: "+(pageNumber -1 ) * 5);
+                            //console.log("Limite superior: "+(pageNumber * 5));
+                            this.datos = this.pacientes.slice((pageNumber -1 ) * 5,(pageNumber * 5))
                         });
                 },
                 disablePatient(id) {
@@ -153,7 +172,7 @@
                     })
                     .then(res => res.json())
                     .then(data => {
-                        this.getPatient();
+                        this.getPatient(this.currentPage);
                     });
                 },
                 editPatient(id) {
@@ -166,6 +185,21 @@
                         this.patientToEdit = data._id;
                         this.edit = true;
                     });
+                },
+                getTotalPages(){
+                    fetch('/api/pacientes')
+                        .then(res => res.json())
+                        .then(data => {
+                            this.pacientes = data
+                            console.log(this.pacientes)
+                            this.totalRows = this.pacientes.length
+                            console.log(this.pacientes.length + " / " + this.perPage)
+                            console.log("Total paginas: " + Math.ceil(this.pacientes.length / this.perPage))
+                        });
+                },
+                changePage(pageNumber) {
+                    console.log("pagina seleccionada " +pageNumber)
+                    this.getPatient(pageNumber);
                 }
             }
         }
