@@ -7,6 +7,7 @@ const Paciente = new Schema ({
     fecha_nac: Date,
     genero: String,
     domicilio: String,
+    correo: String
 });
 
 module.exports = mongoose.model('Paciente', Paciente);

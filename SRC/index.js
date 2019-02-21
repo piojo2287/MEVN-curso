@@ -14,10 +14,9 @@ app.set('port', process.env.port || 4000);
 app.use(morgan('dev'));
 app.use(express.json());
 
-
 //routes
 app.use('/api/pacientes', require('./routes/pacientes'));
-
+app.use('/api/turnos', require('./routes/turnos'));
 
 //static files
 app.use(express.static(__dirname + '/public'));

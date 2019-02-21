@@ -4,6 +4,8 @@ import HomeView from '../views/Home.vue';
 import AboutView from '../views/About.vue';
 import Contacts from '../views/Contactos.vue';
 import Patients from '../views/Pacientes.vue';
+import Turns from '../views/Turnos.vue';
+import Calendar from '../views/Calendar.vue';
 
 Vue.use(Router);
 
@@ -32,5 +34,15 @@ export default new Router({
             name: 'pacientes',
             component: Patients
         },
+        {
+            path: '/turnos',
+            name: 'turnos',
+            component: Turns
+        },
+        {
+            path: '/calandario',
+            name: 'calendario',
+            component: Calendar
+        }
     ]
 })

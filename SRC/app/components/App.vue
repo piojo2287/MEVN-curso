@@ -25,7 +25,9 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <router-link to='/pacientes' class="nav-link">Pacientes</router-link>
-                            <a class="dropdown-item" href="#">Turnos</a>
+                            <!-- <a class="dropdown-item" href="#">Turnos</a> -->
+                            <router-link to='/turnos' class="nav-link">Turnos</router-link>
+                            <router-link to='/calendario' class="nav-link">Calendario</router-link>
                         </div>
                     </li>
                 </ul>

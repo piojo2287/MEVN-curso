@@ -17,7 +17,9 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="form-control">
-                                        <datepicker placeholder="Fecha de nacimiento" 
+                                        <datepicker input-class="datepicker" 
+                                            :language='es' :format="customFormatter" 
+                                            placeholder="Fecha de nacimiento" 
                                             v-model='paciente.fecha_nac'>
                                         </datepicker>
                                     </div>
@@ -38,6 +40,10 @@
                                     <input type="text" 
                                     v-model='paciente.domicilio'
                                     placeholder="Domicilio" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <input type="mail" v-model='paciente.correo'
+                                    placeholder="Correo" class="form-control">
                                 </div>
                                 <template v-if="edit === false">
                                     <button class="btn btn-primary btn-block">Guardar</button>
@@ -84,23 +90,26 @@
 
     <script>
         import Datepicker from 'vuejs-datepicker'; 
+        import {en,es} from 'vuejs-datepicker/dist/locale';
         import BPagination from 'bootstrap-vue/es/components/pagination/pagination'
+        import moment from 'moment';
         
         class Paciente {
-            constructor(nombre, apellido, fecha_nac, genero, domicilio){
+            constructor(nombre, apellido, fecha_nac, genero, domicilio, correo){
                 this.nombre = nombre;
                 this.apellido = apellido;
                 this.fecha_nac = fecha_nac;
                 this.genero = genero;
                 this.domicilio = domicilio;
+                this.correo = correo;
             }
         }
     
         export default {
-            
             components: {
                 Datepicker,
-                BPagination
+                BPagination,
+                moment
             },
             data() {
                 return {
@@ -111,7 +120,10 @@
                     patientToEdit: '',
                     perPage: 5,
                     totalRows: 0,
-                    currentPage: 1
+                    currentPage: 1,
+                    fechaFormato: '',
+                    es: es,
+                    en: en
                 }
             },
             created(){
@@ -131,7 +143,10 @@
                         })
                         .then(res => res.json())
                         .then(data => {
-                            this.getPatient(this.currentPage);
+                            this.getTotalPages();
+                            //this.getPatient(this.currentPage);
+                            console.log("Alta - array pacientes: " + this.pacientes.length);
+                            console.log("Alta - total filas: " + this.totalRows);
                         });
                     }else{
                         fetch('/api/pacientes/' + this.patientToEdit, {
@@ -179,9 +194,10 @@
                     fetch('api/pacientes/' + id)
                     .then(res => res.json())
                     .then(data => {
+                        //this.fechaFormato = this.formatDate(data.fecha_nac);
                         this.paciente = new Paciente(data.nombre, data.apellido,
                             data.fecha_nac, data.genero,
-                            data.domicilio);
+                            data.domicilio, data.correo);
                         this.patientToEdit = data._id;
                         this.edit = true;
                     });
@@ -200,7 +216,22 @@
                 changePage(pageNumber) {
                     console.log("pagina seleccionada " +pageNumber)
                     this.getPatient(pageNumber);
+                },
+                customFormatter(date) {
+                    return moment(date).format('DD/MM/YYYY')
                 }
             }
         }
     </script>
+
+    <style>
+        input.datepicker {
+            border-left-width: 0;
+            border-right-width: 0;
+            border-top-width: 0;
+            border-bottom-color: blue
+        }
+    </style>
+    
+    
+    
