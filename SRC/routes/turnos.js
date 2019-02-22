@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Turno = require('../models/turno');
 
-router.get('/:id', async (req, res) => {
+router.get('/filter/:id', async (req, res) => {
     //const turnos = await Turno.find();
     console.log(req.params.id)
     const turnos = await Turno.find({id_paciente: req.params.id});

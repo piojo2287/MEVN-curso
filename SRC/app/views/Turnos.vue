@@ -63,16 +63,13 @@
                             <th>Hora Fin</th>
                         </thead>
                         <tbody v-for="(turno,index) of datos" v-bind:key="index">
-                            <td>{{turno.fecha_turno}}</td>
-                            <td>{{turno.hora_inicio}}</td>
-                            <td>{{turno.hora_final}}</td>
+                            <td>{{ turno.fecha_turno }}</td>
+                            <td>{{ turno.hora_inicio }}</td>
+                            <td>{{ turno.hora_final }}</td>
+                            <td>{{ dateVerify(turno.fecha_turno) }}</td>
                             <td>
-                                <button @click="disableTurn(paciente._id)" class="btn btn-danger">
-                                    Borrar
-                                </button>
-                                <button @click="editTurn(paciente._id)" class="btn btn-secondary">
-                                    Editar
-                                </button>
+                                <button @click="disableTurn(turno._id)" class="btn btn-danger">Borrar</button>
+                                <button @click="editTurn(turno._id)" class="btn btn-secondary">Editar</button>
                             </td>
                         </tbody>
                     </table>
@@ -120,7 +117,7 @@
                 pacientes: [],
                 datos: [],
                 edit: false,
-                patientToEdit: '',
+                turnToEdit: '',
                 perPage: 5,
                 totalRows: 0,
                 currentPage: 1,
@@ -161,7 +158,7 @@
                         console.log("Alta - total filas: " + this.totalRows);
                     });
                 }else{
-                    fetch('/api/turnos/' + this.patientToEdit, {
+                    fetch('/api/turnos/' + this.turnToEdit, {
                         method: 'PUT',
                         body: JSON.stringify(this.turno),
                         headers: {
@@ -189,6 +186,15 @@
                         this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
                     });
             },
+            getFilteredTurn(id, pageNumber){
+                fetch('/api/turnos/filter/' + id)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.turnos = data
+                        console.log(this.turnos);
+                        this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
+                    });
+            },
             disableTurn(id) {
                 fetch('api/turnos/' + id, {
                     method: 'DELETE',
@@ -207,10 +213,10 @@
                 .then(res => res.json())
                 .then(data => {
                     //this.fechaFormato = this.formatDate(data.fecha_nac);
-                    this.turno = new turno(data.id_paciente, data.fecha_turno, 
+                    this.turno = new Turno(data.id_paciente, data.fecha_turno, 
                                            data.hora_inicio, data.hora_final, 
                                            data.tipo_tratamiento);
-                    this.patientToEdit = data._id;
+                    this.turnToEdit = data._id;
                     this.edit = true;
                 });
             },
@@ -236,14 +242,18 @@
                 //console.log('Llamado a la funcion ... ' + this.turno.id_paciente);
                 console.log('Llamado a la funcion ... ' + event);
                 this.id = event;
-                fetch('/api/turnos/'+event)
-                    .then(res => res.json())
-                    .then(data => {
-                        this.turnos = data
-                        //console.log(this.pacientes);
-                    });
- 
-                //console.log(id);
+                this.getFilteredTurn(event,1);
+            },
+            dateVerify(date){
+                console.log("Fecha: " + date);
+                if(moment(date).format('DD/MM/YYYY') < moment(Date.now()).format('DD/MM/YYYY')){
+                    //activeColor='red';
+                    return 'Realizado';
+                }else{
+                    //$('#estado').addClass('blue-text');
+                    //activeColor='blue';
+                    return 'Pendiente';
+                }
             }
         }
     }
@@ -257,5 +267,19 @@
         border-bottom-width: 0;
         width: 100% ;
     }
+    .redText{
+        color: red;
+        
+    }
+    .blue-text{
+        color: blue;
+    }
+    .text-danger{
+        color: red;
+    }
 </style>
+
+    
+
+
 
