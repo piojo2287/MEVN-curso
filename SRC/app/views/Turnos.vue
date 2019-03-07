@@ -123,12 +123,11 @@
                 currentPage: 1,
                 es: es,
                 en: en,
-                id: ''
+                id_turn: ''
             }
         },
         created(){
             this.getPatients();
-            //this.getTurn(this.currentPage);
         },
         methods: {
             getPatients(){
@@ -152,9 +151,9 @@
                     })
                     .then(res => res.json())
                     .then(data => {
-                        this.getTotalPages();
-                        //this.getPatient(this.currentPage);
-                        console.log("Alta - array pacientes: " + this.turnos.length);
+                        this.getTotalPages(this.id_turn);
+                        this.getFilteredTurn(this.id_turn, this.currentPage);
+                        console.log("Alta - array turnos: " + this.turnos.length);
                         console.log("Alta - total filas: " + this.totalRows);
                     });
                 }else{
@@ -180,9 +179,6 @@
                     .then(res => res.json())
                     .then(data => {
                         this.turnos = data
-                        //console.log("Pagina " +pageNumber);
-                        //console.log("Limite inferior: "+(pageNumber -1 ) * 5);
-                        //console.log("Limite superior: "+(pageNumber * 5));
                         this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
                     });
             },
@@ -191,11 +187,13 @@
                     .then(res => res.json())
                     .then(data => {
                         this.turnos = data
-                        console.log(this.turnos);
+                        this.id_turn = id
+                        console.log('id: '+id + ' - this.id: ' +this.id_turn);
                         this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
                     });
             },
             disableTurn(id) {
+                console.log('disableTurn() ' + id)
                 fetch('api/turnos/' + id, {
                     method: 'DELETE',
                     headers: {
@@ -205,7 +203,7 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    this.getTurn(this.currentPage);
+                    this.getFilteredTurn(this.id_turn, this.currentPage);
                 });
             },
             editTurn(id) {
@@ -220,12 +218,12 @@
                     this.edit = true;
                 });
             },
-            getTotalPages(){
-                fetch('/api/turnos')
+            getTotalPages(id){
+                console.log('getTotalPages()  ' + id)
+                fetch('/api/turnos/filter/' + id)
                     .then(res => res.json())
                     .then(data => {
                         this.turnos = data
-                        console.log(this.turnos)
                         this.totalRows = this.turnos.length
                         console.log(this.turnos.length + " / " + this.perPage)
                         console.log("Total paginas: " + Math.ceil(this.turnos.length / this.perPage))
@@ -233,20 +231,19 @@
             },
             changePage(pageNumber) {
                 console.log("pagina seleccionada " +pageNumber)
-                this.getTurn(pageNumber);
+                this.getFilteredTurn(this.id_turn, pageNumber)
             },
             customFormatter(date) {
                 return moment(date).format('DD/MM/YYYY')
             },
             onChange(event){
-                //console.log('Llamado a la funcion ... ' + this.turno.id_paciente);
-                console.log('Llamado a la funcion ... ' + event);
+                //console.log('Llamado a la funcion onChange()... ' + event);
                 this.id = event;
+                this.getTotalPages(event)
                 this.getFilteredTurn(event,1);
             },
             dateVerify(date){
-                console.log("Fecha: " + date);
-                if(moment(date).format('DD/MM/YYYY') < moment(Date.now()).format('DD/MM/YYYY')){
+                if(moment(date).format('YYYY/MM/DD') < moment(Date.now()).format('YYYY/MM/DD')){
                     //activeColor='red';
                     return 'Realizado';
                 }else{
