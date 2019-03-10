@@ -8,7 +8,7 @@ mongoose.connect('mongodb://localhost/kinesis', { useNewUrlParser: true })
     .catch(err => console.error(err));
 
 //setting
-app.set('port', process.env.port || 4000);
+app.set('port', process.env.port || 3000);
 
 //middlewares
 app.use(morgan('dev'));

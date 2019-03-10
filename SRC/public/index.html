@@ -1,12 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Kinesis</title>
+    <meta name="description" content="consultorio de fisioterapia" />
+    <meta name="author" content="Juan Sebastian Lera" />
+    <title>KINESIS CERRILLOS</title>
+   
+    <!- Refresco de pantalla ->
+        <meta http-equiv="refresh" content="60; url=index.html">
+
+        <!- Obtener fecha y hora ->
+            <Script Language="JavaScript">
+                function dia() {
+                    var hora = new Date()
+                    var hrs = hora.getHours();
+                    var min = hora.getMinutes();
+                    var hoy = new Date();
+                    var m = new Array();
+                    var d = new Array()
+                    var an = hoy.getYear();
+                    m[0] = "Enero"; m[1] = "Febrero"; m[2] = "Marzo";
+                    m[3] = "Abril"; m[4] = "Mayo"; m[5] = "Junio";
+                    m[6] = "Julio"; m[7] = "Agosto"; m[8] = "Septiembre";
+                    m[9] = "Octubre"; m[10] = "Noviembre"; m[11] = "Diciembre";
+                    d[0] = "Domingo"; d[1] = "Lunes"; d[2] = "Martes";
+                    d[3] = "Miercoles"; d[4] = "Jueves"; d[5] = "Viernes";
+                    d[6] = "Sabado";
+                    document.write(d[hoy.getDay()]);
+                    document.write(", ");
+                    document.write(hoy.getDate());
+                    document.write(" de ");
+                    document.write(m[hoy.getMonth()]);
+                    document.write(" La hora es ");
+                    // document.write(" colocor sentecia if de muestra minutos ")
+                    document.write(hrs + ":" + min);
+                }
+            </Script>
 </head>
+
 <body>
-    <h1>Curso</h1>
+    <div>
+            <h1>KINESIS</h1>
+            <h2>CONSULTORIO DE REHABILITACION FISICA </h2>
+            <img src="images/logo.jpg" width="500" />
+        
+        <script src="bundle.js"></script>
+       
+
+
+        
+
+    </div>
 </body>
+
 </html>
