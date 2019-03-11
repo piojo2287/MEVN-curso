@@ -1,1 +1,6 @@
-alert("Vuejs ira aqui 2222")
+import Vue from "vue";
+import App from "./components/App";
+
+new Vue({
+    render: h => h(App)
+}).$mount(#app);

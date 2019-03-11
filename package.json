@@ -1,11 +1,11 @@
 {
-  "name": "MEVN-curso",
+  "name": "mevn-curso",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "webpack": "webpack --mode development"
+    "webpack": "webpack --mode development --watch"
   },
   "keywords": [],
   "author": "",

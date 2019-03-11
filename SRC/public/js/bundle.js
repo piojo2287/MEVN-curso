@@ -90,10 +90,10 @@
 /*!**************************!*\
   !*** ./src/app/index.js ***!
   \**************************/
-/*! no static exports found */
+/*! no exports provided */
 /***/ (function(module, exports) {
 
-eval("alert(\"Vuejs ira aqui 2222\")\n\n//# sourceURL=webpack:///./src/app/index.js?");
+eval("throw new Error(\"Module parse failed: Unexpected character '#' (6:10)\\nYou may need an appropriate loader to handle this file type.\\n| new Vue({\\r\\n|     render: h => h(App)\\r\\n> }).$mount(#app);\");\n\n//# sourceURL=webpack:///./src/app/index.js?");
 
 /***/ })
 
