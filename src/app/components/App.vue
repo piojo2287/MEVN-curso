@@ -69,7 +69,7 @@
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Apellido</th>
+                <th>Apellido</th> 
                 <th>fecha Nacimiento</th>
                 <th>Genero</th>
                 <th>Domicilio</th>
