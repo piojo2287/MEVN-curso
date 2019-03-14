@@ -1,0 +1,37 @@
+{
+  "name": "mevn-curso",
+  "version": "2.0.0",
+  "description": "Nueva version de crud de pacientes",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "webpack": "webpack --mode development --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piojo2287/MEVN-curso.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/piojo2287/MEVN-curso/issues"
+  },
+  "homepage": "https://github.com/piojo2287/MEVN-curso#readme",
+  "dependencies": {
+    "@babel/core": "^7.3.4",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.19",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.10"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.0.5",
+    "babel-preset-env": "^1.7.0",
+    "vue": "^2.6.8",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.8",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
+  }
+}
