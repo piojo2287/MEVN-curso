@@ -28,6 +28,7 @@
                             <!-- <a class="dropdown-item" href="#">Turnos</a> -->
                             <router-link to='/turnos' class="nav-link">Turnos</router-link>
                             <router-link to='/calendario' class="nav-link">Calendario</router-link>
+                            <router-link to='/obrasociales' class="nav-link">Obra Sociales</router-link>
                         </div>
                     </li>
                 </ul>

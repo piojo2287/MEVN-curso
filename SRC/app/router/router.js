@@ -6,6 +6,7 @@ import Contacts from '../views/Contactos.vue';
 import Patients from '../views/Pacientes.vue';
 import Turns from '../views/Turnos.vue';
 import Calendar from '../views/Calendario.vue';
+import OS from '../views/Obrasociales.vue';
 
 Vue.use(Router);
 
@@ -43,6 +44,11 @@ export default new Router({
             path: '/calendario',
             name: 'calendario',
             component: Calendar
+        },
+        {
+            path: '/obrasociales',
+            name: 'obrasociales',
+            component: OS
         }
     ]
 })

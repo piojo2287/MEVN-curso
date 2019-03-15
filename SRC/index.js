@@ -17,6 +17,7 @@ app.use(express.json());
 //routes
 app.use('/api/pacientes', require('./routes/pacientes'));
 app.use('/api/turnos', require('./routes/turnos'));
+app.use('/api/obrasociales', require('./routes/obrasociales'));
 
 //static files
 app.use(express.static(__dirname + '/public'));
