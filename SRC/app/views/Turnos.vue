@@ -128,7 +128,6 @@
                 var fetchResult;
                 var fecha_turno;
                 
-                //console.log("onSelect() " + this.fecha_turno + '  Turno: ' + this.turno.tipo_turno);
                 fecha_turno = moment(date).format('YYYY-MM-DD');
                 console.log("Fecha p/filtrar ==> " + fecha_turno + '  Turno: ' + this.turno.tipo_turno);
                 if(this.turno.tipo_turno == "Mañana"){
