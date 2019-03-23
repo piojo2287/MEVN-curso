@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const Turno = new Schema ({
-    id_paciente: String,
+    orden_turno: Number,
+    tipo_turno: String,
     fecha_turno: Date,
-    hora_inicio: String,
-    hora_final: String,
-    tipo_tratamiento: String
+    hora_inicio: String, 
+    id_paciente: String,
+    nombre_paciente: String,
+    estado: String
 });
 
 module.exports = mongoose.model('Turno', Turno);

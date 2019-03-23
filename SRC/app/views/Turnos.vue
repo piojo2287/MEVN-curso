@@ -1,146 +1,204 @@
 <template>
     <div class="container">
-            <div class="row pt-5">
-                <div class="col-md-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <form @submit.prevent="sendTurn">
-                                <div class="form-group">
-                                    <b-select class="form-control" v-model='turno.id_paciente' 
-                                        @change="onChange($event)">
-                                        <option  disabled :value="null">Seleccione uno</option>
-                                        <option v-for='(paciente,index) in pacientes' 
-                                                :value="paciente._id" :key="index">
-                                            {{paciente.apellido}} {{paciente.nombre}}
-                                        </option>
-                                    </b-select>
-                                </div>
-                                <div class="form-group">
-                                    <div class="form-control">
-                                        <datepicker input-class="datepicker" 
-                                            :language='es' :format="customFormatter" 
-                                            placeholder="Fecha Turno" 
-                                            v-model='turno.fecha_turno'>
-                                        </datepicker>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <b-form-input class="form-control" :type="`time`" 
-                                            v-model='turno.hora_inicio'
-                                            v-b-tooltip.hover title="Hora Inicio Turno"/>
-                                </div>
-                                <div class="form-group">
-                                    <b-form-input class="form-control" :type="`time`" 
-                                            v-model='turno.hora_final'
-                                            v-b-tooltip.hover title="Hora Final Turno"/>
-                                </div>
-                                <div class="form-group">
-                                    <input list="lista_tratamiento" type="text" 
-                                    v-model='turno.tipo_tratamiento'
-                                    placeholder="Tratamiento" class="form-control">
-                                    <datalist id="lista_tratamiento">
-                                        <option value="Fisioterapia 1"></option>
-                                        <option value="Fisioterapia 2"></option>
-                                        <option value="Fisioterapia 3"></option>
-                                    </datalist>
-                                </div>
-                                <template v-if="edit === false">
-                                    <button class="btn btn-primary btn-block">Guardar</button>
-                                </template>
-                                <template v-else>
-                                    <button class="btn btn-primary btn-block">Actualizar</button>
-                                </template>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <table id="mdtable" class="table table-striped table-bordered table-sm" cellspacing="0" 
-                            width="100%" data-pagination="true" data-page-size="7">
-                        <thead>
-                            <th>Fecha</th>
-                            <th>Hora Inicio</th>
-                            <th>Hora Fin</th>
-                        </thead>
-                        <tbody v-for="(turno,index) of datos" v-bind:key="index">
-                            <td>{{ turno.fecha_turno }}</td>
-                            <td>{{ turno.hora_inicio }}</td>
-                            <td>{{ turno.hora_final }}</td>
-                            <td>{{ dateVerify(turno.fecha_turno) }}</td>
-                            <td>
-                                <button @click="disableTurn(turno._id)" class="btn btn-danger">Borrar</button>
-                                <button @click="editTurn(turno._id)" class="btn btn-secondary">Editar</button>
-                            </td>
-                        </tbody>
-                    </table>
-                    <div class="overflow-auto">
-                        <div class="mt-3 text-right">
-                            <b-pagination v-model="currentPage" :total-rows="totalRows"
-                                              :per-page="perPage"
-                                              v-on:input="changePage"/>                 
-                        </div>
-                        <div class="mt-3">Pagina Actual: {{ currentPage }}</div>
-                    </div>
+        <div class="row pt-0 justify-content-center ">
+            <div class="card">
+                <div class="from-group">
+                    <tr>
+                        <td>
+                            <div class="form-control">
+                                <input list="lista_tipo_turno" type="text" 
+                                v-model='turno.tipo_turno'
+                                placeholder="Tipo Turno">
+                                <datalist id="lista_tipo_turno">
+                                    <option v-for="item_turno in lista_tipo_turno">{{item_turno}}</option>
+                                    <!-- <option value="Mañana"></option>
+                                    <option value="Tarde"></option> -->
+                                </datalist>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control">
+                                <datepicker input-class="datepicker" 
+                                    :language='es' format="dd-MM-yyyy"
+                                    placeholder="Turno" 
+                                    v-model='turno.fecha_turno'
+                                    v-on:selected='onSelect'>
+                                </datepicker>
+                            </div>
+                        </td>
+                    </tr>
                 </div>
             </div>
+        </div>
+        <div class="col-md-7">
+            <table id="mdtable" class="table table-striped table-bordered table-sm" cellspacing="0" 
+                    width="100%" data-pagination="true" data-page-size="7">
+                <thead>
+                    <th>hora_inicio</th>
+                    <th>Paciente</th>
+                    <th>Estado</th>
+                </thead>
+                <tbody v-for="(turno,index) of datos" v-bind:key="index">
+                    <td>{{turno.hora_inicio}}</td>
+                    <td>{{turno.nombre_paciente}}</td>
+                    <td>{{turno.estado}}</td>
+                    <td>
+                        <button @click="disablePatient(paciente._id)" class="btn btn-danger">
+                            Borrar
+                        </button>
+                        <button @click="editPatient(paciente._id)" class="btn btn-secondary">
+                            Editar
+                        </button>
+                    </td>
+                </tbody>
+            </table>
+            <div class="overflow-auto">
+                <div class="mt-3 text-right">
+                    <b-pagination v-model="currentPage" :total-rows="totalRows"
+                                        :per-page="perPage"
+                                        v-on:input="changePage"/>                 
+                </div>
+                <div class="mt-3">Pagina Actual: {{ currentPage }}</div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import Datepicker from 'vuejs-datepicker'; 
     import {en,es} from 'vuejs-datepicker/dist/locale';
-    import BPagination from 'bootstrap-vue/es/components/pagination/pagination';
-    import BFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
     import moment from 'moment';
+    import "babel-polyfill";
 
     class Turno {
-        constructor(id_paciente, fecha_turno, hora_inicio, hora_final, tipo_tratamiento){
-            this.id_paciente = id_paciente;
+        constructor(orden_turno, tipo_turno, fecha_turno, hora_inicio, id_paciente, nombre_paciente, estado){
+            this.orden_turno = orden_turno;
+            this.tipo_turno = tipo_turno;
             this.fecha_turno = fecha_turno;
             this.hora_inicio = hora_inicio;
-            this.hora_final = hora_final;
-            this.tipo_tratamiento = tipo_tratamiento;
+            this.id_paciente = id_paciente;
+            this.nombre_paciente = nombre_paciente;
+            this.estado = estado;
         }
     }
 
     export default {
         components: {
             Datepicker,
-            BPagination,
-            BFormSelect,
             moment
         },
         data(){
             return {
                 turno: new Turno(),
-                turnos: [],
-                pacientes: [],
+                horas_m: [9001, 9002, 9003, 9004, 9301, 9302, 9303, 9304,
+                          10001, 10002, 10003, 10004, 10301, 10302, 10303, 10304,
+                          11001, 11002, 11003, 11004, 11301, 11302, 11303, 11304,
+                          12001, 12002, 12003, 12004],
+                horas_t: [16001, 16002, 16003, 16004, 16301, 16302, 16303, 16304,
+                          17001, 17002, 17003, 17004, 17301, 17302, 17303, 17304,
+                          18001, 18002, 18003, 18004, 18301, 18301, 18301, 18301,
+                          19001, 19002, 19003, 19004],
+                lista_tipo_turno: ["Mañana","Tarde"],
+                item_turno: '',
                 datos: [],
-                edit: false,
-                turnToEdit: '',
                 perPage: 5,
                 totalRows: 0,
                 currentPage: 1,
                 es: es,
                 en: en,
-                id_turn: ''
+                isValid: false,
+                count: 0
             }
         },
-        created(){
-            this.getPatients();
+        created() {
+            
         },
         methods: {
-            getPatients(){
-                fetch('/api/pacientes')
+            getFilteredTurn(pageNumber, fecha_turno){
+                fetch('/api/turnos/filter/'+fecha_turno)
                     .then(res => res.json())
                     .then(data => {
-                        this.pacientes = data
-                        //console.log(this.pacientes);
+                        this.turnos = data
+                        //this.id_turn = id
+                        console.log('Turnos: '+ data);
+                        this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
                     });
             },
-            sendTurn() {
-                if (this.edit === false){
-                    console.log(this.turno)
+            async onSelect(date){
+                var fetchResult;
+                var fecha_turno;
+                
+                //console.log("onSelect() " + this.fecha_turno + '  Turno: ' + this.turno.tipo_turno);
+                fecha_turno = moment(date).format('YYYY-MM-DD');
+                console.log("Fecha p/filtrar ==> " + fecha_turno + '  Turno: ' + this.turno.tipo_turno);
+                if(this.turno.tipo_turno == "Mañana"){
+                    fetchResult = fetch('/api/turnos/diurno/' + fecha_turno);
+                    let response = await fetchResult;
+                    let jsonData = await response.json();
+                    this.isValid = ((jsonData == 0) ? true : false);
+                }else{
+                    fetchResult = fetch('/api/turnos/tarde/' + fecha_turno);
+                    let response = await fetchResult;
+                    let jsonData = await response.json();
+                    this.isValid = ((jsonData == 0) ? true : false);
+                }
+                /* let response = await fetchResult;
+                let jsonData = await response.json();
+                this.isValid = ((jsonData == 0) ? true : false); */
+
+                    /* fetch('/api/mañana/count/' + '\''+this.fecha_turno+'\'')
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('data: '+ data);
+                        this.count = data;
+                        if( this.count == 0){
+                            this.insertTurns("m");
+                        }
+                    }); */
+                    /* let fetchResult = fetch('/api/turnos/diurno/' + '\''+this.fecha_turno+'\'');
+                    let response = await fetchResult;
+                    let jsonData = await response.json();
+                    console.log('data: '+ jsonData); */
+                    /* if( jsonData == 0){
+                            this.insertTurns();
+                        } */
+               /*      this.isValid = ((jsonData == 0) ? true : false);
+                }else{ */
+                   /*  fetch('/api/tarde/' + '\''+this.fecha_turno+'\'')
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('data: '+ data);
+                        this.count = data;
+                        if( this.count == 0){
+                            this.insertTurns();
+                        }
+                    }); */
+                    /* let fetchResult = fetch('/api/turnos/tarde/' + '\''+this.fecha_turno+'\'');
+                    let response = await fetchResult;
+                    let jsonData = await response.json();
+                    this.isValid = ((jsonData == 0) ? true : false);
+                } */
+                console.log('isValid: ' + this.isValid);
+                if (this.isValid){
+                    //this.insertTurns(fecha_turno);
+                    console.log("Crea los turnos del dia " + fecha_turno + " "+this.turno.tipo_turno);
+                }else{
+                    this.getFilteredTurn(this.currentPage, fecha_turno)
+                }
+            },
+            insertTurns(fecha){
+                console.log("ingreso a la function insertTurns() ");
+                var i;
+                for (i = 0; i < this.horas_m.length; i++) { 
+                    var str = this.horas_m[i].toString();
+                    if(this.horas_m[i] < 10000){
+                        this.hora_inicio = '0' + str.substring(0,1) + ':' + str.substring(1,3);
+                    }else{
+                        this.hora_inicio = str.substring(0,2) + ':' + str.substring(2,4);
+                    }
+              
+                    this.turno = new Turno(this.horas_m[i], this.turno.tipo_turno, fecha, 
+                                        this.hora_inicio, '', '', 'Disponible');
                     fetch('/api/turnos', {
                         method: 'POST',
                         body: JSON.stringify(this.turno),
@@ -151,132 +209,18 @@
                     })
                     .then(res => res.json())
                     .then(data => {
-                        this.getTotalPages(this.id_turn);
-                        this.getFilteredTurn(this.id_turn, this.currentPage);
-                        console.log("Alta - array turnos: " + this.turnos.length);
-                        console.log("Alta - total filas: " + this.totalRows);
+                        //this.getTotalPages(this.id_turn);
+                        //this.getFilteredTurn(this.id_turn, this.currentPage);
+                        //console.log("Alta - array turnos: " + this.turnos.length);
+                        //console.log("Alta - reg: " + this.fecha_turno + " - " + i);
                     });
-                }else{
-                    fetch('/api/turnos/' + this.turnToEdit, {
-                        method: 'PUT',
-                        body: JSON.stringify(this.turno),
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-type': 'application/json'
-                        }
-                    })
-                    .then (res => res.json())
-                    .then (data => {
-                        this.getTurn(this.currentPage);
-                        this.edit = false;
-                    })
                 }
-
-                this.turno = new Turno();
-            },
-            getTurn(pageNumber){
-                fetch('/api/turnos')
-                    .then(res => res.json())
-                    .then(data => {
-                        this.turnos = data
-                        this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
-                    });
-            },
-            getFilteredTurn(id, pageNumber){
-                fetch('/api/turnos/filter/' + id)
-                    .then(res => res.json())
-                    .then(data => {
-                        this.turnos = data
-                        this.id_turn = id
-                        console.log('id: '+id + ' - this.id: ' +this.id_turn);
-                        this.datos = this.turnos.slice((pageNumber -1 ) * 5,(pageNumber * 5))
-                    });
-            },
-            disableTurn(id) {
-                console.log('disableTurn() ' + id)
-                fetch('api/turnos/' + id, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    this.getFilteredTurn(this.id_turn, this.currentPage);
-                });
-            },
-            editTurn(id) {
-                fetch('api/turnos/' + id)
-                .then(res => res.json())
-                .then(data => {
-                    //this.fechaFormato = this.formatDate(data.fecha_nac);
-                    this.turno = new Turno(data.id_paciente, data.fecha_turno, 
-                                           data.hora_inicio, data.hora_final, 
-                                           data.tipo_tratamiento);
-                    this.turnToEdit = data._id;
-                    this.edit = true;
-                });
-            },
-            getTotalPages(id){
-                console.log('getTotalPages()  ' + id)
-                fetch('/api/turnos/filter/' + id)
-                    .then(res => res.json())
-                    .then(data => {
-                        this.turnos = data
-                        this.totalRows = this.turnos.length
-                        console.log(this.turnos.length + " / " + this.perPage)
-                        console.log("Total paginas: " + Math.ceil(this.turnos.length / this.perPage))
-                    });
             },
             changePage(pageNumber) {
                 console.log("pagina seleccionada " +pageNumber)
-                this.getFilteredTurn(this.id_turn, pageNumber)
+                this.getFilteredTurn(pageNumber);
             },
-            customFormatter(date) {
-                return moment(date).format('DD/MM/YYYY')
-            },
-            onChange(event){
-                //console.log('Llamado a la funcion onChange()... ' + event);
-                this.id = event;
-                this.getTotalPages(event)
-                this.getFilteredTurn(event,1);
-            },
-            dateVerify(date){
-                if(moment(date).format('YYYY/MM/DD') < moment(Date.now()).format('YYYY/MM/DD')){
-                    //activeColor='red';
-                    return 'Realizado';
-                }else{
-                    //$('#estado').addClass('blue-text');
-                    //activeColor='blue';
-                    return 'Pendiente';
-                }
-            }
         }
     }
 </script>
-
-<style>
-    input.datepicker {
-        border-left-width: 0;
-        border-right-width: 0;
-        border-top-width: 0;
-        border-bottom-width: 0;
-        width: 100% ;
-    }
-    .redText{
-        color: red;
-        
-    }
-    .blue-text{
-        color: blue;
-    }
-    .text-danger{
-        color: red;
-    }
-</style>
-
-    
-
-
 

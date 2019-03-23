@@ -7,6 +7,7 @@ import Patients from '../views/Pacientes.vue';
 import Turns from '../views/Turnos.vue';
 import Calendar from '../views/Calendario.vue';
 import OS from '../views/Obrasociales.vue';
+import Tratamiento from '../views/Tratamientos.vue';
 
 Vue.use(Router);
 
@@ -49,6 +50,11 @@ export default new Router({
             path: '/obrasociales',
             name: 'obrasociales',
             component: OS
+        },
+        {
+            path: '/tratamientos',
+            name: 'tratamientos',
+            component: Tratamiento
         }
     ]
 })

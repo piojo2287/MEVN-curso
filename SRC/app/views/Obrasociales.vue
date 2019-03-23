@@ -103,7 +103,7 @@
                         .then(res => res.json())
                         .then(data => {
                             this.getTotalPages();
-                            //this.getPatient(this.currentPage);
+                            this.getOS(this.currentPage);
                             console.log("Alta - array obrasociales: " + this.obrasociales.length);
                             console.log("Alta - total filas: " + this.totalRows);
                         });
