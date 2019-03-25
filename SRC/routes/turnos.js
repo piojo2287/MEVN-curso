@@ -2,11 +2,27 @@ const express = require ('express');
 const router = express.Router();
 
 const Turno = require('../models/turno');
+const filas_pares = [2,4,6,8,10,12,14,16,18,20,22,24,26,28];
+const filas_nones = [1,3,5,7,9,11,13,15,17,19,21,23,25,27];
 
 router.get('/filter/:fecha_turno', async (req, res) => {
     //const turnos = await Turno.find();
     console.log(req.params.id)
     const turnos = await Turno.find({fecha_turno: req.params.fecha_turno});
+    res.json(turnos);
+});
+
+router.get('/pares/:fecha_turno', async (req, res) => {
+    //const turnos = await Turno.find();
+    console.log(req.params.id)
+    const turnos = await Turno.find({fecha_turno: req.params.fecha_turno, orden:{ $in: filas_pares}}).sort({orden:1});
+    res.json(turnos);
+});
+
+router.get('/nones/:fecha_turno', async (req, res) => {
+    //const turnos = await Turno.find();
+    console.log(req.params.id)
+    const turnos = await Turno.find({fecha_turno: req.params.fecha_turno, orden:{ $in: filas_nones}}).sort({orden:1});
     res.json(turnos);
 });
 

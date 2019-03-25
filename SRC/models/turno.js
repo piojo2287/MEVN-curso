@@ -6,6 +6,7 @@ const Turno = new Schema ({
     tipo_turno: String,
     fecha_turno: Date,
     hora_inicio: String, 
+    orden: Number,
     id_paciente: String,
     nombre_paciente: String,
     estado: String
