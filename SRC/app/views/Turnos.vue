@@ -30,16 +30,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-12">
+
+        
             <table id="mdtable" class="table table-striped table-bordered table-sm" cellspacing="0" 
-                    width="100%" data-pagination="true" data-page-size="8">
+                  style="width:100%" data-pagination="true" data-page-size="8">
                 <tr heigth="100%">
                     <td>
                         <thead>
-                            <th>Hora</th>
-                            <th>Orden</th>
-                            <th>Paciente</th>
-                            <th>Estado</th>
+                            <th style="width:10%">Hora</th>
+                            <th style="width:5%">Orden</th>
+                            <th style="width:70%">Paciente</th>
+                            <th style="width:15%">Estado</th>
                         </thead>
                         <tbody v-for="(turno,index) of datos1" v-bind:key="index">
                             <tr>
@@ -91,6 +93,9 @@
                     </td>
                 </tr>
             </table>
+
+
+
             <div class="overflow-auto">
                 <div class="mt-3 text-right">
                     <b-pagination v-model="currentPage" :total-rows="totalRows"
