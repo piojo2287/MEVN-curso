@@ -45,7 +45,7 @@
                             <tr>
                                 <td>{{turno.hora_inicio}}</td>
                                 <td>{{turno.orden}}</td>
-                                <td><b-select class="form-control" v-model='turno.id_paciente'>
+                                <td id="nombre"><b-select  v-model='turno.id_paciente'>
                                         <option  disabled :value="null">Seleccione uno</option>
                                         <option v-for='(paciente,index) in pacientes' 
                                                 :value="paciente._id" :key="index">
@@ -68,7 +68,7 @@
                             <tr>
                                 <td>{{turno.hora_inicio}}</td>
                                 <td>{{turno.orden}}</td>
-                                <td><b-select class="form-control" v-model='turno.id_paciente'>
+                                <td id="nombre"><b-select  v-model='turno.id_paciente'>
                                         <option  disabled :value="null">Seleccione uno</option>
                                         <option v-for='(paciente,index) in pacientes' 
                                                 :value="paciente._id" :key="index">
@@ -283,4 +283,17 @@
         }
     }
 </script>
+
+<style>
+    /* .tbody {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 5px;
+    } */
+    .nombre {
+        width: 200px;
+        padding: 10px;
+    }
+</style>
+
 
