@@ -189,7 +189,7 @@
             </b-modal>
             <b-modal ref="modal_sesion"  hide-footer title="Datos de la Sesion" ok-only>
                 <div class="d-block text-center">
-                    <h3>{{this.nombre}} - Sesion {{this.ficha.ultima_sesion}}</h3>
+                    <h3>{{this.nombre}} - Sesion {{this.nro_sesion}}</h3>
                 </div>
                 <div class="card">
                     <div class="card-body">
@@ -617,11 +617,11 @@
                         this.texto = "Sin ficha"
                         this.showModal('modal_ficha');
                        
-                        //this.nro_sesion = 1
+                        this.nro_sesion = 1
                         //this.texto = ''
                         //this.showModal('modal_sesion');
                     }else{
-                        this.nro_sesion = this.ultima_sesion + 1;
+                        this.nro_sesion = this.ultima_sesion;
                         console.log(" Tiene ficha " + this.id_paciente);
                         //this.getSesion(this.id_ficha)
                         this.showModal('modal_sesion');
@@ -648,6 +648,8 @@
                 this.hideModal('modal_ficha');
                 this.ficha.ultima_sesion = 1
                 this.texto = ''
+                
+                this.ficha = new Ficha();
                 this.showModal('modal_sesion');
             },
             async guardarSesion(value){
@@ -688,8 +690,10 @@
                 this.hideModal('modal_sesion');
                 this.desc_trat = ''; 
                 this.duracion = '';
-                this.sesion.desc_trat = '';
-                this.sesion.duracion = '';
+
+                this.sesion = new Sesion();
+                //this.sesion.desc_trat = '';
+                //this.sesion.duracion = '';
 
                 this.ficha.ultima_sesion = this.ficha.ultima_sesion + 1;
                 if(this.ficha.ultima_sesion > this.ficha.total_sesiones ){

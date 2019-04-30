@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    await Ficha.findOneAndUpdate(req.params.id, req.body);
+    await Ficha.findByIdAndUpdate(req.params.id, req.body);
     res.json({
         status: 'Ficha actualizado'
     });
