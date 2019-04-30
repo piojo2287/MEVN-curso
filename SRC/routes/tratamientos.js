@@ -4,7 +4,7 @@ const router = express.Router();
 const Tratamiento = require('../models/tratamiento');
 
 router.get('/', async (req, res) => {
-    const tratamientos = await Tratamiento.find();
+    const tratamientos = await Tratamiento.find({estado: 'Activo'});
     res.json(tratamientos);
 });
 

@@ -22,7 +22,7 @@ router.get('/paresm/:fecha_turno', async (req, res) => {
 
 router.get('/nonesm/:fecha_turno', async (req, res) => {
     //const turnos = await Turno.find();
-    console.log(req.params.id)
+    //console.log(req.params.id)
     const turnos = await Turno.find({fecha_ref: req.params.fecha_turno, orden:{ $in: filas_nones}, 
                                      tipo_turno: "Mañana"}).sort({orden:1});
     res.json(turnos);
@@ -35,14 +35,14 @@ router.get('/count/:fecha_turno', async (req, res) => {
 });
 
 router.get('/diurno/:fecha_turno', async (req, res) => {
-    console.log('request:' + req.fecha_turno)
+    console.log('request:' + req.params.fecha_turno)
     const count = await Turno.find({fecha_ref: req.params.fecha_turno, 
                                     orden_turno: '9001'}).countDocuments();
     res.json(count);
 });
 
 router.get('/tarde/:fecha_turno', async (req, res) => {
-    console.log('request:' + req.fecha_turno)
+    console.log('request:' + req.params.fecha_turno)
     const count = await Turno.find({fecha_ref: req.params.fecha_turno, 
                                     orden_turno: '16001'}).countDocuments();
     res.json(count);

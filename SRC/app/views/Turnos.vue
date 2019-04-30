@@ -10,7 +10,8 @@
                                 v-model='turno.tipo_turno'
                                 placeholder="Tipo Turno">
                                 <datalist id="lista_tipo_turno">
-                                    <option v-for="item_turno in lista_tipo_turno">{{item_turno}}</option>
+                                    <option v-for="item_turno in lista_tipo_turno" :key="item_turno.index">
+                                         {{item_turno}}</option>
                                     <!-- <option value="Mañana"></option>
                                     <option value="Tarde"></option> -->
                                 </datalist>
@@ -60,8 +61,8 @@
                                 <td>{{turno.orden_hora}}</td>
                                 <td><b-select  v-model='turno.id_paciente' v-on:input="onAssignPacLeft">
                                         <option  disabled :value="null">Seleccione uno</option>
-                                        <option v-for='(paciente,index) in pacientes' 
-                                                :value="paciente._id" :key="index">
+                                        <option v-for='paciente in pacientes' 
+                                                :value="paciente._id" :key="paciente.index">
                                             {{paciente.apellido}} {{paciente.nombre}}
                                         </option>
                                     </b-select>
@@ -69,9 +70,17 @@
                                 <td>
                                     <input type="text" class="form-control" 
                                        v-model='turno.dx' 
-                                       @change="modificar([turno._id,turno.dx])">
+                                       @change="modificar([turno._id,
+                                                           turno.orden_turno,
+                                                           turno.tipo_turno,
+                                                           turno.hora_inicio,
+                                                           turno.orden,
+                                                           turno.orden_hora,
+                                                           turno.dx])">
                                 </td>
-                                <td>{{turno.estado}}</td>
+                                <td v-on:dblclick="onDblClick([turno.estado, 
+                                                               turno.id_paciente])">
+                                                               {{turno.estado}}</td>
                                 <!-- <td><b-select  v-model='turno.id_paciente' v-on:input="onAssignTra">
                                         <option  disabled :value="null">Seleccione uno</option>
                                         <option v-for='(tratamiento,index) in tratamientos' 
@@ -97,17 +106,25 @@
                                 <td>{{turno.orden_hora}}</td>
                                 <td><b-select  v-model='turno.id_paciente' v-on:input="onAssignPacRight">
                                         <option  disabled :value="null">Seleccione uno</option>
-                                        <option v-for='(paciente,index) in pacientes' 
-                                                :value="paciente._id" :key="index">
+                                        <option v-for='paciente in pacientes' 
+                                                :value="paciente._id" :key="paciente.index">
                                             {{paciente.apellido}} {{paciente.nombre}}
                                         </option>
                                     </b-select></td>
                                 <td>
                                     <input  type="text" class="form-control"
                                         v-model='turno.dx' 
-                                        @change="modificar([turno._id,turno.dx])">
+                                        @change="modificar([turno._id,
+                                                            turno.orden_turno,
+                                                            turno.tipo_turno,
+                                                            turno.hora_inicio,
+                                                            turno.orden,
+                                                            turno.orden_hora,
+                                                            turno.dx])">
                                 </td>
-                                <td>{{turno.estado}}</td>
+                                <td v-on:dblclick="onDblClick([turno.estado, 
+                                                               turno.id_paciente])">
+                                                               {{turno.estado}}</td>
 
                                 <!-- <td><b-select  v-model='turno.id_paciente' v-on:input="onAssignTra">
                                         <option  disabled :value="null">Seleccione uno</option>
@@ -131,6 +148,75 @@
             </div>
             <div class="mt-3">Pagina Actual: {{ currentPage }}</div>
         </div>
+        <!-- Modal para cargar datos de la Ficha de un Paciente -->
+        <div>
+            <b-modal ref="modal_ficha"  hide-footer title="Datos de la Ficha" 
+                   no-stacking ok-only>
+                <div class="d-block text-center">
+                    <h3>{{this.nombre}}-{{this.texto}}</h3>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="text" 
+                            v-model='ficha.obra_social'
+                            placeholder="Obra Social" class="form-control"
+                            required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" 
+                            v-model='ficha.afiliado'
+                            placeholder="Nro.Afiliado" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" 
+                            v-model='ficha.diagnostico'
+                            placeholder="Diagnostico" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" 
+                            v-model='ficha.procedimiento'
+                            placeholder="Procedimiento" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" 
+                            v-model='ficha.total_sesiones'
+                            placeholder="Total sesiones" class="form-control">
+                        </div>
+                        <b-button class="mt-3" variant="outline-danger"  @click="guardarFicha">Guardar</b-button>
+                    </div>
+                </div>
+            </b-modal>
+            <b-modal ref="modal_sesion"  hide-footer title="Datos de la Sesion" ok-only>
+                <div class="d-block text-center">
+                    <h3>{{this.nombre}} - Sesion {{this.ficha.ultima_sesion}}</h3>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <b-select  v-model='sesion.id_trat' v-on:input="onAssignTrat"
+                                       class="form-control">
+                                <option  disabled :value="null">Seleccione uno</option>
+                                <option v-for='tt in tratamientos' 
+                                        :value="tt.descripcion" :key="tt.index">
+                                    {{tt.descripcion}}
+                                </option>
+                            </b-select>
+                            
+                            <!-- <input type="text" 
+                            v-model='sesion.tratamiento'
+                            placeholder="Tratamiento" class="form-control"> -->
+                        </div>
+                        <div class="form-group">
+                            <input type="number" 
+                            v-model.number='duracion'
+                            placeholder="Duracion" class="form-control">
+                        </div>
+                        <b-button class="mt-3" variant="outline-danger"  @click="guardarSesion">Guardar</b-button>
+                    </div>
+                </div>
+            </b-modal>
+        </div>
     </div>
 </template>
 
@@ -141,7 +227,8 @@
     import "babel-polyfill";
 
     class Turno {
-        constructor(orden_turno, tipo_turno, fecha_ref, fecha_turno, hora_inicio, orden, orden_hora, id_paciente, nombre_paciente, dx, estado){
+        constructor(orden_turno, tipo_turno, fecha_ref, fecha_turno, hora_inicio, orden, orden_hora, 
+                    id_paciente, nombre_paciente, dx, estado){
             this.orden_turno = orden_turno;
             this.tipo_turno = tipo_turno;
             this.fecha_ref = fecha_ref;
@@ -155,16 +242,43 @@
             this.estado = estado;
         }
     }
-
+    class Sesion{
+        constructor(id_ficha, nro_sesion, fecha_sesion, id_trat, desc_trat, duracion, estado){
+            this.id_ficha = id_ficha;
+            this.nro_sesion = nro_sesion;
+            this.fecha_sesion = fecha_sesion;
+            this.id_trat = id_trat;
+            this.desc_trat = desc_trat;
+            this.duracion = duracion;
+            this.estado = estado;
+        }
+    }
+    class Ficha {
+        constructor (id_paciente, nombre_paciente, obra_social, afiliado, diagnostico, autorizado, 
+                     procedimiento, ultima_sesion, total_sesiones, estado) {
+            this.id_paciente = id_paciente;
+            this.nombre_paciente = nombre_paciente;
+            this.obra_social = obra_social;
+            this.afiliado = afiliado;
+            this.diagnostico = diagnostico;
+            this.autorizado = autorizado;
+            this.procedimiento =  procedimiento;
+            this.ultima_sesion = ultima_sesion
+            this.total_sesiones = total_sesiones;
+            this.estado = estado;
+        }
+    }
     export default {
+        name: 'app',
         components: {
             Datepicker,
             moment
         },
         data(){
             return {
-                turno: new Turno(),
-                turnos: [],
+                turno: new Turno(), sesion: new Sesion(), ficha: new Ficha(),
+                turnos: [], datos1: [], datos2: [], tratamientos: [], pacientes: [],
+                fichas: [],
                 horas_m: [9001, 9002, 9003, 9004, 9301, 9302, 9303, 9304,
                           10001, 10002, 10003, 10004, 10301, 10302, 10303, 10304,
                           11001, 11002, 11003, 11004, 11301, 11302, 11303, 11304,
@@ -174,30 +288,26 @@
                           18001, 18002, 18003, 18004, 18301, 18301, 18301, 18301,
                           19001, 19002, 19003, 19004],
                 lista_tipo_turno: ["Mañana","Tarde"],
-                item_turno: '',
-                fecha_actual: '',
-                fecha_turno: '',
-                id_paciente: '',
-                nombre: '',
-                id_turno: '',
-                datos1: [],
-                datos2: [],
-                perPage: 8,
-                totalRows: 0,
-                currentPage: 1,
-                es: es,
-                en: en,
-                isValid: false,
-                edit: false,
-                count: 0
+                
+                fecha_actual: '', fecha_turno: '', id_paciente: '', id_ficha: '',
+                nombre: '', cant_sesiones: 0, ultima_sesion: 0, texto: '',
+                id_turno: '', item_turno: '', desc_trat: '', duracion: '',
+                
+                perPage: 8, totalRows: 0, currentPage: 1, count: 0,
+                es: es, en: en, isValid: false, edit: false, exists: false
             }
         },
         created() {
             this.getPatients();
             this.getTratamientos();
-
         },
         methods: {
+            showModal(modal) {
+                this.$refs[modal].show()
+            },
+            hideModal(modal) {
+                this.$refs[modal].hide()
+            },
             getPatients(){
                 fetch('/api/pacientes')
                     .then(res => res.json())
@@ -217,8 +327,6 @@
                     .then(res => res.json())
                     .then(data => {
                         this.turnos = data
-                        //this.id_turn = id
-                        //console.log('Turnos: '+ data);
                         this.datos2 = this.turnos.slice((pageNumber -1 ) * this.perPage,
                                        (pageNumber * this.perPage))
                     });
@@ -226,15 +334,12 @@
                     .then(res => res.json())
                     .then(data => {
                         this.turnos = data
-                        //this.id_turn = id
-                        //console.log('Turnos: '+ data);
                         this.datos1 = this.turnos.slice((pageNumber -1 ) * this.perPage,
                                        (pageNumber * this.perPage))
                     });
             },
             async onSelect(value){
                 var fetchResult;
-               
                 this.fecha_actual = moment(value).format('YYYY-MM-DD');
                 console.log("Fecha seleccionada ==> " + this.fecha_actual);
                 //---------------------------------------------------------------------------------
@@ -306,8 +411,6 @@
                     .then(data => {
                         //this.getTotalPages(this.id_turn);
                         //this.getFilteredTurn(this.id_turn, this.currentPage);
-                        //console.log("Alta - array turnos: " + this.turnos.length);
-                        //console.log("Alta - reg: " + this.fecha_turno + " - " + i);
                     });
                 }
             },
@@ -321,7 +424,8 @@
                     this.edit = true;
                 });
             },
-            updateTurnos() {           
+            updateTurnos() {    
+                /*  Verificar si tiene ficha */       
                 console.log("Fecha_actual: " + this.fecha_turno + "    " + this.id_turno)
                 fetch('/api/turnos/' + this.id_turno, {
                     method: 'PUT',
@@ -336,7 +440,20 @@
                     this.getFilteredTurn(this.currentPage, this.fecha_turno, this.turno.tipo_turno);
                     this.edit = false;
                 })
-                //this.getFilteredTurn(this.currentPage, fecha_turno, this.turno.tipo_turno);
+            },
+            updateFicha() {           
+                fetch('/api/fichas/' + this.id_ficha, {
+                    method: 'PUT',
+                    body: JSON.stringify(this.ficha),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    }
+                })
+                .then (res => res.json())
+                .then (data => {
+                    console.log("ficha actualizada - ultima sesion: " + " " + this.ficha.ultima_sesion);
+                })
             },
             getTotalPages(fecha_turno, tipo){
                 if (tipo = "Mañana"){
@@ -373,31 +490,286 @@
                         this.nombre = data.apellido + " " + data.nombre;
                     });
             },
-            //onAssignTra(value){
-            //    console.log("Ingreso un tratamiento !!!!" + value);
-            //    this.edit = true;
-            //},
+            onAssignTrat(value){
+                console.log("Ingreso un tratamiento !!!!" + value);
+                
+            },
             omitir(){
                 this.edit = false;
             },
             modificar(value){
                 console.log("Ingreso a modificar() !!!!" + value + " " + this.nombre);
                 this.id_turno = value[0]
+                this.turno.orden_turno = value[1]
+                this.turno.tipo_turno = value[2]
+                this.turno.hora_inicio = value[3]
+                this.turno.orden = value[4]
+                this.turno.orden_hora = value[5]
                 this.turno.nombre_paciente = this.nombre
-                this.turno.dx = value[1]
+                this.turno.dx = value[6]
                 this.turno.estado='Ocupado'
                 this.edit = true;
-            }
+            },
+            async onDblClick(value){
+                var fetchResult;
+                var response;
+                var jsonData;
+                console.log("Ingreso a onDblClick() !!!! " + value[0] + " " + value[1]);
+                this.id_paciente = value[1]
+                if (value[0] == 'Ocupado'){
+                    /*  
+                        Busca los datos de Pacientes 
+                    */
+                    fetchResult = fetch('api/pacientes/' + this.id_paciente);
+                    response = await fetchResult;
+                    jsonData = await response.json();
+                    this.nombre = jsonData.apellido + " " + jsonData.nombre;
+                    /* fetch('api/pacientes/' + this.id_paciente)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.nombre = data.apellido + " " + data.nombre;
+                    }); */
+ 
+                    /*  
+                        Busca los datos de la Fichas 
+                    */
+                    console.log(" Busca la ficha " + this.id_paciente);
+                    //this.getFicha(this.id_paciente);
+
+                    var fetchResult;
+                    var response;
+                    var jsonData;
+                    fetchResult = fetch('api/fichas/' + this.id_paciente);
+                    response = await fetchResult;
+                    jsonData = await response.json();
+                    
+                    this.fichas = jsonData;
+                    console.log("Long. Ficha   ----" + this.fichas.length)
+
+
+                    console.log("Long. Ficha (2)   ----" + this.fichas.length)
+                    if (this.fichas.length > 0){
+                        this.ultima_sesion = this.fichas[0].ultima_sesion
+                        this.id_ficha = this.fichas[0]._id;
+                        console.log(" Ficha (3)  ----" + this.fichas[0]._id)
+                        this.ficha = this.fichas[0];
+                        this.exists = true; 
+                    }else{
+                        //console.log(" Ficha (4)  ----" + this.fichas[0]._id)
+                        this.exists = false;
+                    } 
+                    /* if (!this.exists){
+                        console.log(" NO tiene ficha ")
+                        this.texto = "Sin ficha"
+                        this.showModal('modal_ficha');
+                    }else{
+                        console.log(" Tiene ficha " + this.id_paciente);
+                    }
+ */
+                    /* fetchResult = fetch('api/fichas/' + this.id_paciente);
+                    response = await fetchResult;
+                    jsonData = await response.json();
+                    console.log(" Datos de la ficha " + jsonData._id);
+                    this.ficha = jsonData;
+                    if (jsonData == 0){
+                        console.log(" NO tiene ficha " + jsonData)
+                        this.texto = "Sin ficha"
+                        this.showModal('modal_ficha');
+                    } */
+                    
+                    /* fetch('api/fichas/' + this.id_paciente)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.fichas = data;
+                        console.log(" Datos de la ficha " + this.fichas.nombre_paciente);
+                        if (data == 0){
+                            console.log(" NO tiene ficha ")
+                            this.texto = "Sin ficha"
+                            this.showModal('modal_ficha');
+                        }else{
+                            console.log(" Tiene ficha " + this.ficha.id_paciente);
+                        }
+                    }); */
+                    
+                    
+                    /*  
+                        Busca los datos de la Ficha activa del paciente 
+                    */
+                    /* fetchResult = fetch('api/fichas/activa/' + this.id_paciente)
+                    response = await fetchResult;
+                    jsonData = await response.json();
+                    this.ficha = jsonData
+                    console.log("  ficha " + this.id_ficha) */
+
+
+                    /* fetch('api/fichas/activa/' + this.id_paciente)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.ficha = data
+                        console.log("  ficha " + this.ficha._id)
+                    }); */
+
+                    /*  
+                        Obtiene la cantidad de sesiones realizadas 
+                    */
+                    if (!this.exists){
+                        console.log(" NO tiene ficha ")
+                        this.texto = "Sin ficha"
+                        this.showModal('modal_ficha');
+                       
+                        //this.nro_sesion = 1
+                        //this.texto = ''
+                        //this.showModal('modal_sesion');
+                    }else{
+                        this.nro_sesion = this.ultima_sesion + 1;
+                        console.log(" Tiene ficha " + this.id_paciente);
+                        //this.getSesion(this.id_ficha)
+                        this.showModal('modal_sesion');
+                    }   
+                }
+            },
+            guardarFicha(){
+                this.ficha = new Ficha(this.id_paciente, this.nombre, this.ficha.obra_social, 
+                                       this.ficha.afiliado, this.ficha.diagnostico, false, 
+                                       this.ficha.procedimiento, 1,
+                                       this.ficha.total_sesiones, 'Generada');
+                fetch('/api/fichas', {
+                    method: 'POST',
+                    body: JSON.stringify(this.ficha),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    //console.log("Alta - array turnos: " + this.turnos.length);
+                });
+                this.hideModal('modal_ficha');
+                this.ficha.ultima_sesion = 1
+                this.texto = ''
+                this.showModal('modal_sesion');
+            },
+            async guardarSesion(value){
+                if (!this.exists){
+                    var fetchResult;
+                    var response;
+                    var jsonData;
+                    fetchResult = fetch('api/fichas/' + this.id_paciente);
+                    response = await fetchResult;
+                    jsonData = await response.json();
+                    
+                    this.fichas = jsonData;
+                    console.log("Long. Ficha   ----" + this.fichas.length)
+                    this.ficha = this.fichas[0];
+                    this.id_ficha = this.fichas[0]._id;
+                }
+
+                console.log("Valores de la sesion "+this.ficha.ultima_sesion+"  "+this.desc_trat+
+                                   "  "+this.duracion)
+                this.sesion = new Sesion(this.id_ficha, this.ficha.ultima_sesion, 
+                                         moment(new Date()).format('YYYY-MM-DD'),
+                                         this.sesion.id_trat , this.desc_trat, 
+                                         this.duracion, "Realizada")
+                fetch('/api/sesiones', {
+                    method: 'POST',
+                    body: JSON.stringify(this.sesion),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    //console.log("Alta - array turnos: " + this.turnos.length);
+                });
+
+                
+                this.hideModal('modal_sesion');
+                this.desc_trat = ''; 
+                this.duracion = '';
+                this.sesion.desc_trat = '';
+                this.sesion.duracion = '';
+
+                this.ficha.ultima_sesion = this.ficha.ultima_sesion + 1;
+                if(this.ficha.ultima_sesion > this.ficha.total_sesiones ){
+                    this.ficha.estado = "Realizada"
+                }
+                console.log("Ficha (5)   ----" + this.ficha._id 
+                         + " " + this.ficha.id_paciente
+                         + " " + this.ficha.nombre_paciente
+                         + " " + this.ficha.obra_social
+                         + " " + this.ficha.afiliado
+                         + " " + this.ficha.diagnostico
+                         + " " + this.ficha.ultima_sesion
+                         + " " + this.ficha.estado)
+                this.updateFicha();
+
+            },
+            /* async getFicha(id_paciente){
+                var fetchResult;
+                var response;
+                var jsonData;
+                fetchResult = fetch('api/fichas/' + this.id_paciente);
+                response = await fetchResult;
+                jsonData = await response.json();
+                
+                this.fichas = jsonData;
+                console.log("Long. Ficha   ----" + this.fichas.length)
+                this.ficha = this.fichas[0];
+                this.id_ficha = this.fichas[0]._id; */
+                
+                //this.id_ficha = this.fichas[0]._id;
+                
+                
+                /* fetch('api/fichas/' + this.id_paciente)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.fichas = data;
+                        //this.id_ficha = this.fichas[0]._id;
+                        //console.log(" Ficha   ----" + this.fichas[0]._id)
+                        this.sleep(1000)
+                        console.log("Long. Ficha (1)   ----" + this.fichas.length)
+                    }); */
+                
+                //console.log("Long. Ficha   ----" + this.fichas.length)
+                /* if (this.fichas.length > 0){
+                    this.ultima_sesion = this.ficha[0].ultima_sesion
+                    this.id_ficha = this.fichas[0]._id;
+                    console.log(" Ficha   ----" + this.fichas[0]._id)
+                    this.exists = true; 
+                }else{
+                    this.exists = false;
+                }  */  
+                
+           /*  }, */
+            getSesion(id_ficha){
+                /* var fetchResult;
+                var response;
+                var jsonData;
+                fetchResult = fetch('api/sesiones/count/' + this.id_ficha);
+                response = await fetchResult;
+                jsonData = await response.json();
+                this.count = jsonData
+                console.log("  sesion " + this.count) */
+                console.log("  id_ficha recibida  " + id_ficha + " - " + 'api/sesiones/count/' + id_ficha)
+                fetch('api/sesiones/count/' + id_ficha)
+                .then(res => res.json())
+                .then(data => {
+                    this.nro_sesion = data
+                    console.log("  sesion " + data)
+                });
+            },
+            /* sleep(milliseconds) {
+                var start = new Date().getTime();
+                for (var i = 0; i < 1e7; i++) {
+                    if ((new Date().getTime() - start) > milliseconds) {
+                        break;
+                    }
+                }
+            } */
         }
     }
 </script>
-
-<style>
-    /* .tbody {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 5px;
-    } */
-</style>
 
 

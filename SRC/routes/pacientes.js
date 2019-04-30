@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const paciente = await Paciente.findById(req.params.id);
     res.json(paciente);
+    console.log("Devuelde los datos de pacientes");
 });
 
 router.post('/', async (req, res) => {
